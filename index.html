@@ -4,103 +4,828 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Timesheet Unit</title>
+
   <style>
-    *{box-sizing:border-box} body{margin:0;padding:20px 12px;background:#e0edf7;font-family:Arial,sans-serif;color:#10254a}
-    .card{max-width:720px;margin:auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 8px 28px #17345b20}
-    header{background:#08245e;color:#fff;padding:25px 24px;border-bottom:5px solid #16b6b1;text-align:center}
-    header h2{margin:0 0 8px} header p{margin:0;font-size:14px}
-    main{padding:24px} h3{font-size:14px;letter-spacing:1px;border-bottom:2px solid #16b6b1;padding-bottom:10px;margin:4px 0 20px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px}.field{min-width:0}
-    label{display:block;font-weight:600;font-size:14px;margin-bottom:8px}
-    input,select{width:100%;padding:13px 12px;border:1px solid #cbd8e7;border-radius:8px;background:#fff;font-size:15px;color:#142642}
-    input[type=file]{font-size:12px;padding:10px} select:disabled{background:#eef2f7;color:#94a3b8}
-    .section{margin-bottom:26px} button{width:100%;padding:15px;border:0;border-radius:8px;background:#08245e;color:#fff;font-size:16px;font-weight:bold;cursor:pointer}
-    button:disabled{opacity:.6;cursor:wait}
-    #status{display:none;margin-top:16px;padding:14px 16px;border-radius:10px;text-align:center;font-size:14px;font-weight:bold}
-    .status-success{display:block!important;background:#dcfce7;border:2px solid #22c55e;color:#166534}
-    .status-error{display:block!important;background:#fee2e2;border:2px solid #ef4444;color:#991b1b}
-    .status-loading{display:block!important;background:#fef3c7;border:2px solid #f59e0b;color:#92400e}
-    .note{font-size:12px;color:#64748b;margin-top:6px}
-    @media(max-width:520px){.grid{grid-template-columns:1fr}main{padding:18px}}
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px 12px;
+      background: #e0edf7;
+      font-family: Arial, sans-serif;
+      color: #10254a;
+    }
+
+    .card {
+      max-width: 720px;
+      margin: auto;
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 28px #17345b20;
+    }
+
+    header {
+      background: #08245e;
+      color: #fff;
+      padding: 25px 24px;
+      border-bottom: 5px solid #16b6b1;
+      text-align: center;
+    }
+
+    header h2 {
+      margin: 0 0 8px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    main {
+      padding: 24px;
+    }
+
+    h3 {
+      font-size: 14px;
+      letter-spacing: 1px;
+      border-bottom: 2px solid #16b6b1;
+      padding-bottom: 10px;
+      margin: 4px 0 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px 14px;
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 13px 12px;
+      border: 1px solid #cbd8e7;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 15px;
+      color: #142642;
+    }
+
+    input[type=file] {
+      font-size: 12px;
+      padding: 10px;
+    }
+
+    select:disabled {
+      background: #eef2f7;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .section {
+      margin-bottom: 26px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: 0;
+      border-radius: 8px;
+      background: #08245e;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    #status {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .status-success {
+      display: block !important;
+      background: #dcfce7;
+      border: 2px solid #22c55e;
+      color: #166534;
+    }
+
+    .status-error {
+      display: block !important;
+      background: #fee2e2;
+      border: 2px solid #ef4444;
+      color: #991b1b;
+    }
+
+    .status-loading {
+      display: block !important;
+      background: #fef3c7;
+      border: 2px solid #f59e0b;
+      color: #92400e;
+    }
+
+    .note {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 6px;
+    }
+
+    @media(max-width:520px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      main {
+        padding: 18px;
+      }
+    }
   </style>
 </head>
+
 <body>
+
 <div class="card">
-<header><h2>📋 Timesheet Unit</h2><p>Form pelaporan Timesheet HM</p></header>
-<main><form id="form">
-<div class="section"><h3>Daily Timesheet Record</h3><div class="grid">
-<div class="field"><label>Nama Operator *</label><input name="nama" required placeholder="Nama lengkap operator"></div>
-<div class="field"><label>Company Unit *</label><select name="company" id="company" required><option value="">— Pilih Perusahaan —</option><option>PT AGI</option><option>PT SJS</option><option>PT IMJ</option><option>PT MJM</option><option>PT Supercrane</option><option>PT AKRATO</option></select></div>
-<div class="field"><label>Code Unit *</label><select name="codeUnit" id="codeUnit" required disabled><option value="">— Pilih Company dahulu —</option></select></div>
-<div class="field"><label>Shift Kerja *</label><select name="shift" required><option value="">— Pilih Shift —</option><option>Day Shift</option><option>Night Shift</option></select></div>
-<div class="field"><label>HM Awal *</label><input name="hmAwal" type="number" min="0" step="0.1" required placeholder="Contoh: 1250.5"></div>
-<div class="field"><label>HM Akhir *</label><input name="hmAkhir" type="number" min="0" step="0.1" required placeholder="Contoh: 1258.5"></div>
-<div class="field"><label>Lokasi Kerja *</label><input name="lokasi" required placeholder="Lokasi area kerja"></div>
-</div></div>
-<div class="section"><h3>DOKUMENTASI</h3><div class="grid">
-<div class="field"><label>Foto TimeSheet *</label><input id="fotoTS" name="fotoTS" type="file" accept="image/jpeg,image/png,image/webp" required><div class="note">Foto timesheet unit, maksimal 5 MB.</div></div>
-<div class="field"><label>Foto Speedo - HM Akhir *</label><input id="fotoSpeedometer" name="fotoSpeedometer" type="file" accept="image/jpeg,image/png,image/webp" required><div class="note">Foto HM pada panel unit, maksimal 5 MB.</div></div>
-</div></div>
-<button id="submit" type="submit">Kirim Laporan</button><div id="status" role="status" aria-live="polite"></div>
-</form></main></div>
+
+  <header>
+    <h2>📋 Timesheet Unit</h2>
+    <p>Form pelaporan Timesheet HM</p>
+  </header>
+
+  <main>
+
+    <form id="form">
+
+      <div class="section">
+
+        <h3>Daily Timesheet Record</h3>
+
+        <div class="grid">
+
+          <div class="field">
+            <label>Nama Operator *</label>
+            <input
+              name="nama"
+              required
+              placeholder="Nama lengkap operator">
+          </div>
+
+          <div class="field">
+            <label>Company Unit *</label>
+
+            <select
+              name="company"
+              id="company"
+              required>
+
+              <option value="">
+                — Pilih Perusahaan —
+              </option>
+
+              <option value="PT AGI">PT AGI</option>
+              <option value="PT SJS">PT SJS</option>
+              <option value="PT IMJ">PT IMJ</option>
+              <option value="PT MJM">PT MJM</option>
+              <option value="PT Supercrane">PT Supercrane</option>
+              <option value="PT AKRATO">PT AKRATO</option>
+
+            </select>
+          </div>
+
+          <div class="field">
+
+            <label>Code Unit *</label>
+
+            <select
+              name="codeUnit"
+              id="codeUnit"
+              required
+              disabled>
+
+              <option value="">
+                — Pilih Company dahulu —
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>Shift Kerja *</label>
+
+            <select
+              name="shift"
+              required>
+
+              <option value="">
+                — Pilih Shift —
+              </option>
+
+              <option value="Day Shift">
+                Day Shift
+              </option>
+
+              <option value="Night Shift">
+                Night Shift
+              </option>
+
+            </select>
+
+          </div>
+
+          <div class="field">
+
+            <label>HM Awal *</label>
+
+            <input
+              name="hmAwal"
+              type="number"
+              min="0"
+              step="0.1"
+              required
+              placeholder="Contoh: 1250.5">
+
+          </div>
+
+          <div class="field">
+
+            <label>HM Akhir *</label>
+
+            <input
+              name="hmAkhir"
+              type="number"
+              min="0"
+              step="0.1"
+              required
+              placeholder="Contoh: 1258.5">
+
+          </div>
+
+          <div class="field">
+
+            <label>Lokasi Kerja *</label>
+
+            <input
+              name="lokasi"
+              required
+              placeholder="Lokasi area kerja">
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="section">
+
+        <h3>DOKUMENTASI</h3>
+
+        <div class="grid">
+
+          <div class="field">
+
+            <label>Foto TimeSheet *</label>
+
+            <input
+              id="fotoTS"
+              name="fotoTS"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              required>
+
+            <div class="note">
+              Foto timesheet unit, maksimal 5 MB.
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>Foto Speedo - HM Akhir *</label>
+
+            <input
+              id="fotoSpeedometer"
+              name="fotoSpeedometer"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              required>
+
+            <div class="note">
+              Foto HM pada panel unit, maksimal 5 MB.
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <button
+        id="submit"
+        type="submit">
+
+        Kirim Laporan
+
+      </button>
+
+
+      <div
+        id="status"
+        role="status"
+        aria-live="polite">
+      </div>
+
+    </form>
+
+  </main>
+
+</div>
+
 
 <script>
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbzpgSaFrfFcBfb3t0HkuchcxvdSllIyDML-1voK3fN0KRbfhc2tZ5cpm1YOSyz36l8z/exec';
- 
-const daftarUnit={
- 'PT AGI':['EX 101'],
- 'PT SJS':['SK A11','SK A16','SK A22','SK A26','PC D23','PC D38','PC B55','PC B102','DT 48','DT 220','DT 230','DT 253','DT 242','DT 274','BL 001','BD 08','FT 16','MX 024','MX 025'],
- 'PT IMJ':['CR 372','CR 696','CR 833','CT 702','DT 080','DT 089','DT 100','DT 120','DT 156','EX 603','MX 71'],
- 'PT MJM':['BD 04','EX 13','EX 08'],
- 'PT Supercrane':['CT 14-02','CR 60-2'],
- 'PT AKRATO':['CP 02']
+
+const SCRIPT_URL =
+'https://script.google.com/macros/s/AKfycbzpgSaFrfFcBfb3t0HkuchcxvdSllIyDML-1voK3fN0KRbfhc2tZ5cpm1YOSyz36l8z/exec';
+
+
+/* =====================================================
+   DAFTAR CODE UNIT
+===================================================== */
+
+const daftarUnit = {
+
+  'PT AGI': [
+    'EX 101'
+  ],
+
+  'PT SJS': [
+    'SK A11',
+    'SK A16',
+    'SK A22',
+    'SK A26',
+    'PC D23',
+    'PC D38',
+    'PC B55',
+    'PC B102',
+    'DT 48',
+    'DT 220',
+    'DT 230',
+    'DT 253',
+    'DT 242',
+    'DT 274',
+    'BL 001',
+    'BD 08',
+    'FT 16',
+    'MX 024',
+    'MX 025'
+  ],
+
+  'PT IMJ': [
+    'CR 372',
+    'CR 696',
+    'CR 833',
+    'CT 702',
+    'DT 080',
+    'DT 089',
+    'DT 100',
+    'DT 120',
+    'DT 156',
+    'EX 603',
+    'MX 71'
+  ],
+
+  'PT MJM': [
+    'BD 04',
+    'EX 13',
+    'EX 08'
+  ],
+
+  'PT Supercrane': [
+    'CT 14-02',
+    'CR 60-2'
+  ],
+
+  'PT AKRATO': [
+    'CP 02'
+  ]
+
 };
 
-const form=document.getElementById('form'),button=document.getElementById('submit'),status=document.getElementById('status');
-const companySelect=document.getElementById('company'),unitSelect=document.getElementById('codeUnit');
 
-companySelect.addEventListener('change',function(){
- const units=daftarUnit[this.value]||[]; unitSelect.innerHTML='<option value="">— '+(this.value?'Pilih Code Unit':'Pilih Company dahulu')+' —</option>';
- units.forEach(u=>{const o=document.createElement('option');o.value=u;o.textContent=u;unitSelect.appendChild(o)});
- unitSelect.disabled=!units.length;
-});
+/* =====================================================
+   ELEMENT HTML
+===================================================== */
 
-function bacaFoto(file){
- return new Promise((resolve,reject)=>{
-  if(!file)return reject(new Error('Foto TS dan speedometer wajib diisi.'));
-  if(file.size>5*1024*1024)return reject(new Error('Setiap foto maksimal 5 MB.'));
-  const r=new FileReader();
-  r.onload=()=>resolve({name:file.name,data:r.result});
-  r.onerror=()=>reject(new Error('Gagal membaca foto.'));
-  r.readAsDataURL(file);
- });
+const form =
+document.getElementById('form');
+
+const button =
+document.getElementById('submit');
+
+const status =
+document.getElementById('status');
+
+const companySelect =
+document.getElementById('company');
+
+const unitSelect =
+document.getElementById('codeUnit');
+
+
+/* =====================================================
+   DROPDOWN CODE UNIT
+===================================================== */
+
+companySelect.addEventListener(
+  'change',
+  function () {
+
+    const company = this.value;
+
+    const units =
+      daftarUnit[company] || [];
+
+
+    unitSelect.innerHTML = '';
+
+
+    const placeholder =
+      document.createElement('option');
+
+
+    placeholder.value = '';
+
+
+    if (!company) {
+
+      placeholder.textContent =
+        '— Pilih Company dahulu —';
+
+    } else if (units.length > 0) {
+
+      placeholder.textContent =
+        '— Pilih Code Unit —';
+
+    } else {
+
+      placeholder.textContent =
+        '— Unit belum tersedia —';
+
+    }
+
+
+    unitSelect.appendChild(
+      placeholder
+    );
+
+
+    units.forEach(function (unit) {
+
+      const option =
+        document.createElement('option');
+
+      option.value = unit;
+
+      option.textContent = unit;
+
+      unitSelect.appendChild(option);
+
+    });
+
+
+    unitSelect.disabled =
+      units.length === 0;
+
+  }
+);
+
+
+/* =====================================================
+   BACA FOTO
+===================================================== */
+
+function bacaFoto(file) {
+
+  return new Promise(
+    function (resolve, reject) {
+
+      if (!file) {
+
+        reject(
+          new Error(
+            'Foto TS dan speedometer wajib diisi.'
+          )
+        );
+
+        return;
+      }
+
+
+      if (file.size > 5 * 1024 * 1024) {
+
+        reject(
+          new Error(
+            'Setiap foto maksimal 5 MB.'
+          )
+        );
+
+        return;
+      }
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        function () {
+
+          resolve({
+
+            name: file.name,
+
+            data: reader.result
+
+          });
+
+        };
+
+
+      reader.onerror =
+        function () {
+
+          reject(
+            new Error(
+              'Gagal membaca foto.'
+            )
+          );
+
+        };
+
+
+      reader.readAsDataURL(file);
+
+    }
+  );
+
 }
 
-form.addEventListener('submit',async e=>{
- e.preventDefault(); if(!form.reportValidity())return;
- if(!SCRIPT_URL.startsWith('https://script.google.com/')){status.className='status-error';status.textContent='⚠ URL Apps Script belum dipasang.';return}
- const data=Object.fromEntries(new FormData(form).entries());
- if(Number(data.hmAkhir)<Number(data.hmAwal)){status.className='status-error';status.textContent='⚠ HM Akhir tidak boleh lebih kecil dari HM Awal.';return}
- if(!(daftarUnit[data.company]||[]).includes(data.codeUnit)){status.className='status-error';status.textContent='⚠ Code Unit tidak sesuai dengan Company Unit.';return}
- button.disabled=true;button.textContent='Mengirim...';status.className='status-loading';status.textContent='⏳ Laporan sedang diproses...';
- try{
-  const [ts,sp]=await Promise.all([bacaFoto(document.getElementById('fotoTS').files[0]),bacaFoto(document.getElementById('fotoSpeedometer').files[0])]);
-  data.fotoTS=ts;data.fotoSpeedometer=sp;
-  const response = await fetch(SCRIPT_URL, {
-  method: 'POST',
-  body: JSON.stringify(data)
-});
 
-const result = await response.json();
+/* =====================================================
+   SUBMIT FORM
+===================================================== */
 
-if (!result.success) {
-  throw new Error(result.message || 'Gagal menyimpan laporan.');
-}
-  status.className='status-success';status.innerHTML='✓ LAPORAN BERHASIL DIKIRIM';
-  form.reset();unitSelect.innerHTML='<option value="">— Pilih Company dahulu —</option>';unitSelect.disabled=true;
- }catch(err){status.className='status-error';status.textContent='✕ '+err.message}
- button.disabled=false;button.textContent='Kirim Laporan';
-});
+form.addEventListener(
+  'submit',
+  async function (e) {
+
+    e.preventDefault();
+
+
+    if (!form.reportValidity()) {
+      return;
+    }
+
+
+    /* CEK URL APPS SCRIPT */
+
+    if (
+      !SCRIPT_URL ||
+      !SCRIPT_URL.startsWith(
+        'https://script.google.com/'
+      )
+    ) {
+
+      status.className =
+        'status-error';
+
+      status.textContent =
+        '⚠ URL Apps Script belum dipasang.';
+
+      return;
+    }
+
+
+    /* AMBIL DATA FORM */
+
+    const data =
+      Object.fromEntries(
+        new FormData(form).entries()
+      );
+
+
+    /* VALIDASI HM */
+
+    const hmAwal =
+      Number(data.hmAwal);
+
+    const hmAkhir =
+      Number(data.hmAkhir);
+
+
+    if (hmAkhir < hmAwal) {
+
+      status.className =
+        'status-error';
+
+      status.textContent =
+        '⚠ HM Akhir tidak boleh lebih kecil dari HM Awal.';
+
+      return;
+    }
+
+
+    /* VALIDASI UNIT */
+
+    const units =
+      daftarUnit[data.company] || [];
+
+
+    if (!units.includes(data.codeUnit)) {
+
+      status.className =
+        'status-error';
+
+      status.textContent =
+        '⚠ Code Unit tidak sesuai dengan Company Unit.';
+
+      return;
+    }
+
+
+    /* LOCK BUTTON */
+
+    button.disabled = true;
+
+    button.textContent =
+      'Mengirim...';
+
+
+    status.className =
+      'status-loading';
+
+    status.textContent =
+      '⏳ Laporan sedang diproses...';
+
+
+    try {
+
+      /* BACA FOTO */
+
+      const [
+        fotoTS,
+        fotoSpeedometer
+      ] = await Promise.all([
+
+        bacaFoto(
+          document.getElementById(
+            'fotoTS'
+          ).files[0]
+        ),
+
+        bacaFoto(
+          document.getElementById(
+            'fotoSpeedometer'
+          ).files[0]
+        )
+
+      ]);
+
+
+      data.fotoTS =
+        fotoTS;
+
+      data.fotoSpeedometer =
+        fotoSpeedometer;
+
+
+      /* =================================================
+         KIRIM KE GOOGLE APPS SCRIPT
+      ================================================= */
+
+      const response =
+        await fetch(
+          SCRIPT_URL,
+          {
+
+            method: 'POST',
+
+            headers: {
+              'Content-Type':
+                'text/plain;charset=utf-8'
+            },
+
+            body:
+              JSON.stringify(data)
+
+          }
+        );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          'Server Apps Script tidak merespons.'
+        );
+
+      }
+
+
+      const result =
+        await response.json();
+
+
+      if (
+        !result ||
+        result.success !== true
+      ) {
+
+        throw new Error(
+          result &&
+          result.message
+            ? result.message
+            : 'Gagal menyimpan laporan.'
+        );
+
+      }
+
+
+      /* =================================================
+         BERHASIL
+      ================================================= */
+
+      status.className =
+        'status-success';
+
+      status.innerHTML =
+        '✓ LAPORAN BERHASIL DISIMPAN';
+
+
+      form.reset();
+
+
+      unitSelect.innerHTML =
+        '<option value="">— Pilih Company dahulu —</option>';
+
+
+      unitSelect.disabled =
+        true;
+
+
+    } catch (error) {
+
+      console.error(error);
+
+
+      status.className =
+        'status-error';
+
+      status.textContent =
+        '✕ ' +
+        (
+          error.message ||
+          'Terjadi kesalahan saat mengirim laporan.'
+        );
+
+    }
+
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      'Kirim Laporan';
+
+  }
+);
+
 </script>
+
 </body>
 </html>
