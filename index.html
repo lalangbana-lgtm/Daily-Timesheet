@@ -184,14 +184,32 @@
 
         <div class="grid">
 
+          <!-- TANGGAL TIMESHEET -->
+          <div class="field">
+            <label>Tanggal Timesheet *</label>
+
+            <input
+              id="tanggal"
+              name="tanggal"
+              type="date"
+              required>
+
+          </div>
+
+
+          <!-- NAMA OPERATOR -->
           <div class="field">
             <label>Nama Operator *</label>
+
             <input
               name="nama"
               required
               placeholder="Nama lengkap operator">
+
           </div>
 
+
+          <!-- COMPANY UNIT -->
           <div class="field">
             <label>Company Unit *</label>
 
@@ -214,6 +232,8 @@
             </select>
           </div>
 
+
+          <!-- CODE UNIT -->
           <div class="field">
 
             <label>Code Unit *</label>
@@ -232,6 +252,8 @@
 
           </div>
 
+
+          <!-- SHIFT -->
           <div class="field">
 
             <label>Shift Kerja *</label>
@@ -256,6 +278,8 @@
 
           </div>
 
+
+          <!-- HM AWAL -->
           <div class="field">
 
             <label>HM Awal *</label>
@@ -270,6 +294,8 @@
 
           </div>
 
+
+          <!-- HM AKHIR -->
           <div class="field">
 
             <label>HM Akhir *</label>
@@ -284,6 +310,8 @@
 
           </div>
 
+
+          <!-- LOKASI -->
           <div class="field">
 
             <label>Lokasi Kerja *</label>
@@ -300,11 +328,15 @@
       </div>
 
 
+      <!-- DOKUMENTASI -->
+
       <div class="section">
 
         <h3>DOKUMENTASI</h3>
 
         <div class="grid">
+
+          <!-- FOTO TIMESHEET -->
 
           <div class="field">
 
@@ -323,6 +355,8 @@
 
           </div>
 
+
+          <!-- FOTO SPEEDOMETER -->
 
           <div class="field">
 
@@ -346,6 +380,8 @@
       </div>
 
 
+      <!-- BUTTON -->
+
       <button
         id="submit"
         type="submit">
@@ -354,6 +390,8 @@
 
       </button>
 
+
+      <!-- STATUS -->
 
       <div
         id="status"
@@ -372,6 +410,43 @@
 
 const SCRIPT_URL =
 'https://script.google.com/macros/s/AKfycbzpgSaFrfFcBfb3t0HkuchcxvdSllIyDML-1voK3fN0KRbfhc2tZ5cpm1YOSyz36l8z/exec';
+
+
+/* =====================================================
+   TANGGAL OTOMATIS
+===================================================== */
+
+const tanggalInput =
+  document.getElementById('tanggal');
+
+
+/*
+   Isi otomatis tanggal hari ini.
+
+   Operator tetap bisa mengganti
+   tanggal secara manual melalui
+   kalender pada input tanggal.
+*/
+
+const hariIni =
+  new Date();
+
+const tahun =
+  hariIni.getFullYear();
+
+const bulan =
+  String(
+    hariIni.getMonth() + 1
+  ).padStart(2, '0');
+
+const tanggal =
+  String(
+    hariIni.getDate()
+  ).padStart(2, '0');
+
+
+tanggalInput.value =
+  `${tahun}-${bulan}-${tanggal}`;
 
 
 /* =====================================================
@@ -443,19 +518,19 @@ const daftarUnit = {
 ===================================================== */
 
 const form =
-document.getElementById('form');
+  document.getElementById('form');
 
 const button =
-document.getElementById('submit');
+  document.getElementById('submit');
 
 const status =
-document.getElementById('status');
+  document.getElementById('status');
 
 const companySelect =
-document.getElementById('company');
+  document.getElementById('company');
 
 const unitSelect =
-document.getElementById('codeUnit');
+  document.getElementById('codeUnit');
 
 
 /* =====================================================
@@ -466,7 +541,8 @@ companySelect.addEventListener(
   'change',
   function () {
 
-    const company = this.value;
+    const company =
+      this.value;
 
     const units =
       daftarUnit[company] || [];
@@ -505,18 +581,24 @@ companySelect.addEventListener(
     );
 
 
-    units.forEach(function (unit) {
+    units.forEach(
+      function (unit) {
 
-      const option =
-        document.createElement('option');
+        const option =
+          document.createElement('option');
 
-      option.value = unit;
+        option.value =
+          unit;
 
-      option.textContent = unit;
+        option.textContent =
+          unit;
 
-      unitSelect.appendChild(option);
+        unitSelect.appendChild(
+          option
+        );
 
-    });
+      }
+    );
 
 
     unitSelect.disabled =
@@ -547,7 +629,10 @@ function bacaFoto(file) {
       }
 
 
-      if (file.size > 5 * 1024 * 1024) {
+      if (
+        file.size >
+        5 * 1024 * 1024
+      ) {
 
         reject(
           new Error(
@@ -568,9 +653,11 @@ function bacaFoto(file) {
 
           resolve({
 
-            name: file.name,
+            name:
+              file.name,
 
-            data: reader.result
+            data:
+              reader.result
 
           });
 
@@ -609,7 +696,9 @@ form.addEventListener(
 
 
     if (!form.reportValidity()) {
+
       return;
+
     }
 
 
@@ -640,6 +729,21 @@ form.addEventListener(
       );
 
 
+    /* VALIDASI TANGGAL */
+
+    if (!data.tanggal) {
+
+      status.className =
+        'status-error';
+
+      status.textContent =
+        '⚠ Tanggal Timesheet wajib dipilih.';
+
+      return;
+
+    }
+
+
     /* VALIDASI HM */
 
     const hmAwal =
@@ -658,6 +762,7 @@ form.addEventListener(
         '⚠ HM Akhir tidak boleh lebih kecil dari HM Awal.';
 
       return;
+
     }
 
 
@@ -667,7 +772,11 @@ form.addEventListener(
       daftarUnit[data.company] || [];
 
 
-    if (!units.includes(data.codeUnit)) {
+    if (
+      !units.includes(
+        data.codeUnit
+      )
+    ) {
 
       status.className =
         'status-error';
@@ -676,12 +785,14 @@ form.addEventListener(
         '⚠ Code Unit tidak sesuai dengan Company Unit.';
 
       return;
+
     }
 
 
     /* LOCK BUTTON */
 
-    button.disabled = true;
+    button.disabled =
+      true;
 
     button.textContent =
       'Mengirim...';
@@ -788,6 +899,30 @@ form.addEventListener(
 
 
       form.reset();
+
+
+      /* Setelah reset, tanggal kembali
+         otomatis ke hari ini */
+
+      const resetDate =
+        new Date();
+
+      const resetTahun =
+        resetDate.getFullYear();
+
+      const resetBulan =
+        String(
+          resetDate.getMonth() + 1
+        ).padStart(2, '0');
+
+      const resetTanggal =
+        String(
+          resetDate.getDate()
+        ).padStart(2, '0');
+
+
+      tanggalInput.value =
+        `${resetTahun}-${resetBulan}-${resetTanggal}`;
 
 
       unitSelect.innerHTML =
